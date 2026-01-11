@@ -4,11 +4,16 @@
  *
  * SECURITY: All commands are executed via spawnSync with arguments as arrays,
  * which avoids shell interpretation and prevents command injection.
+ * Commands use full paths to prevent PATH manipulation attacks.
  */
 import { spawnSync } from "child_process";
 
-// Whitelist of allowed commands for security
-const ALLOWED_COMMANDS = new Set(["xcrun", "axe"]);
+// Whitelist of allowed commands with their full paths for security
+// Using full paths prevents PATH manipulation attacks
+const ALLOWED_COMMANDS = {
+  "axe": "/opt/homebrew/bin/axe",
+  "xcrun": "/usr/bin/xcrun"
+};
 
 export class CommandExecutor {
   /**
@@ -21,7 +26,7 @@ export class CommandExecutor {
     const commandName = command[0];
 
     // Security: Only allow whitelisted commands
-    if (!ALLOWED_COMMANDS.has(commandName)) {
+    if (!(commandName in ALLOWED_COMMANDS)) {
       throw new Error(`Command not allowed: ${commandName}`);
     }
 
@@ -32,7 +37,9 @@ export class CommandExecutor {
       shell: false,
     };
 
-    const result = spawnSync(command[0], command.slice(1), {
+    // Use full path to prevent PATH manipulation attacks
+    const fullPath = ALLOWED_COMMANDS[commandName];
+    const result = spawnSync(fullPath, command.slice(1), {
       ...defaultOptions,
       ...options,
     });
@@ -59,11 +66,13 @@ export class CommandExecutor {
    * @returns {string} Command output
    */
   executeSafeCommand(command, args = []) {
-    if (!ALLOWED_COMMANDS.has(command)) {
+    if (!(command in ALLOWED_COMMANDS)) {
       throw new Error(`Command not allowed: ${command}`);
     }
 
-    const result = spawnSync(command, args, {
+    // Use full path to prevent PATH manipulation attacks
+    const fullPath = ALLOWED_COMMANDS[command];
+    const result = spawnSync(fullPath, args, {
       encoding: "utf8",
       shell: false,
     });
