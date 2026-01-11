@@ -21,6 +21,10 @@ import { SimulatorService } from "./services/SimulatorService.js";
 // Tools
 import { ScreenshotTool } from "./tools/ScreenshotTool.js";
 import { ListDevicesTool } from "./tools/ListDevicesTool.js";
+import { TapTool } from "./tools/TapTool.js";
+import { SwipeTool } from "./tools/SwipeTool.js";
+import { TypeTextTool } from "./tools/TypeTextTool.js";
+import { DescribeUITool } from "./tools/DescribeUITool.js";
 import { ToolRegistry } from "./tools/ToolRegistry.js";
 
 // Initialize dependencies (Dependency Inversion Principle)
@@ -33,6 +37,10 @@ const toolRegistry = new ToolRegistry();
 // Register tools (Open/Closed Principle - easy to add new tools)
 toolRegistry.register(new ScreenshotTool(simulatorService));
 toolRegistry.register(new ListDevicesTool(simulatorService));
+toolRegistry.register(new TapTool(simulatorService));
+toolRegistry.register(new SwipeTool(simulatorService));
+toolRegistry.register(new TypeTextTool(simulatorService));
+toolRegistry.register(new DescribeUITool(simulatorService));
 
 // Initialize the MCP Server
 const server = new Server(

@@ -1,19 +1,40 @@
 {
   "name": "visual-cortex",
   "version": "1.0.0",
-  "description": "MCP server for listing iOS simulators and taking screenshots.",
-  "main": "index.js",
+  "description": "MCP server for iOS Simulator interaction - screenshots, tap, scroll, type, and UI inspection for AI coding assistants.",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "setup": "node bin/setup.js"
   },
-  "keywords": ["mcp", "ios", "simulator", "screenshot", "cursor"],
+  "keywords": [
+    "mcp",
+    "ios",
+    "simulator",
+    "screenshot",
+    "cursor",
+    "ai",
+    "automation",
+    "testing",
+    "react-native",
+    "xcode"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": ["darwin"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/erkutr-prog/visual-cortex-mcp.git"
   },
+  "bugs": {
+    "url": "https://github.com/erkutr-prog/visual-cortex-mcp/issues"
+  },
+  "homepage": "https://github.com/erkutr-prog/visual-cortex-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
     "zod": "^4.3.5"

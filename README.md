@@ -1,19 +1,23 @@
 # Visual Cortex
 
-🧠 **MCP Server for iOS Simulator Management and Screenshots**
+🧠 **MCP Server for iOS Simulator Interaction and Visual Debugging**
 
-Visual Cortex is a Model Context Protocol (MCP) server that provides AI assistants (like Cursor) with the ability to interact with iOS Simulators. Take screenshots, list devices, and manage simulators directly from your AI coding assistant.
+Visual Cortex is a Model Context Protocol (MCP) server that provides AI assistants (like Cursor) with the ability to **see and interact** with iOS Simulators. Take screenshots, tap buttons, scroll, type text, and explore the UI hierarchy—all directly from your AI coding assistant.
 
 ## Features
 
 - 📸 **Take Screenshots** - Capture the current screen of your iOS Simulator
-- 📱 **List Devices** - Discover all available iOS Simulators with their status, UDID, and runtime version
-- 🔍 **Device Discovery** - Find which simulators are booted and ready to use
+- 👆 **Tap** - Tap on UI elements by coordinates, accessibility ID, or label
+- 📜 **Swipe & Scroll** - Perform scroll gestures or custom swipes
+- ⌨️ **Type Text** - Type into text fields using keyboard simulation
+- 🔍 **Describe UI** - Get the accessibility hierarchy of the current screen
+- 📱 **List Devices** - Discover all available iOS Simulators with their status
 
 ## Requirements
 
 - **macOS** - iOS Simulator only runs on macOS
 - **Xcode** - Required for `xcrun simctl` command-line tools
+- **AXe** - Required for UI interactions (install via `brew tap cameroncooke/axe && brew install axe`)
 - **Node.js** - Version 18 or higher (ES modules support)
 - **Cursor** - Or any MCP-compatible client
 
@@ -214,6 +218,89 @@ list_devices()
 list_devices({ available_only: true })
 ```
 
+### `tap`
+
+Tap on a specific point on the iOS Simulator screen, or tap an element by its accessibility identifier or label.
+
+**Arguments:**
+- `x` (number, optional): X coordinate to tap (in points). Use with `y`.
+- `y` (number, optional): Y coordinate to tap (in points). Use with `x`.
+- `id` (string, optional): Accessibility identifier (testID) of the element to tap.
+- `label` (string, optional): Accessibility label of the element to tap.
+
+**Note:** Provide either coordinates (x, y), accessibility id, or label.
+
+**Examples:**
+```javascript
+// Tap at coordinates
+tap({ x: 200, y: 400 })
+
+// Tap by accessibility ID (React Native testID)
+tap({ id: "login-button" })
+
+// Tap by accessibility label
+tap({ label: "Submit" })
+```
+
+### `swipe`
+
+Perform a swipe or scroll gesture on the iOS Simulator.
+
+**Arguments:**
+- `direction` (string, optional): Preset gesture. One of:
+  - `scroll-up`, `scroll-down`, `scroll-left`, `scroll-right`
+  - `swipe-from-left-edge`, `swipe-from-right-edge`
+  - `swipe-from-top-edge`, `swipe-from-bottom-edge`
+- `startX`, `startY`, `endX`, `endY` (numbers, optional): Custom swipe coordinates
+- `duration` (number, optional): Duration in seconds
+
+**Examples:**
+```javascript
+// Scroll down the page
+swipe({ direction: "scroll-down" })
+
+// Swipe from left edge (go back)
+swipe({ direction: "swipe-from-left-edge" })
+
+// Custom swipe
+swipe({ startX: 200, startY: 500, endX: 200, endY: 200 })
+```
+
+### `type_text`
+
+Type text into the currently focused text field on the iOS Simulator.
+
+**Arguments:**
+- `text` (string, required): The text to type
+
+**Note:** Make sure a text field is focused before typing. Supports US keyboard characters (A-Z, a-z, 0-9, and common symbols).
+
+**Example:**
+```javascript
+// Type into a focused text field
+type_text({ text: "Hello World!" })
+```
+
+### `describe_ui`
+
+Get the accessibility hierarchy of the current iOS Simulator screen. Returns all visible UI elements with their accessibility labels, identifiers, types, and positions.
+
+**Arguments:**
+- `format` (string, optional): Output format
+  - `summary` (default): Readable list of interactive elements
+  - `full`: Complete JSON hierarchy
+
+**Examples:**
+```javascript
+// Get summary of interactive elements
+describe_ui()
+
+// Get full JSON hierarchy
+describe_ui({ format: "full" })
+```
+
+**Use case:** Call `describe_ui` to discover element identifiers, then use `tap` with those identifiers to interact with elements reliably.
+
 ## Troubleshooting
 
 ### "No iOS Simulator is currently running"
@@ -264,6 +351,34 @@ npm install
 # Run the server directly (for testing)
 node src/server.js
 ```
+
+## Security
+
+Visual Cortex is designed with security in mind:
+
+### Input Validation
+- All user inputs (coordinates, accessibility IDs, labels, text) are validated
+- Shell metacharacters are blocked to prevent command injection
+- Coordinates are range-checked to prevent unexpected behavior
+
+### Command Execution
+- Only whitelisted commands (`xcrun`, `axe`) can be executed
+- Commands are executed via `spawnSync` with array arguments (no shell interpretation)
+- No shell=true option is used, preventing shell injection attacks
+
+### Local-Only Operation
+- The MCP server runs locally and only interacts with iOS Simulators
+- No network connections are made by the server
+- No data is sent to external services
+
+### Dependencies
+- Minimal dependencies (`@modelcontextprotocol/sdk` and `zod`)
+- Regular `npm audit` checks recommended
+- All dependencies are from trusted sources
+
+### Reporting Security Issues
+
+If you discover a security vulnerability, please open a private security advisory on GitHub rather than a public issue.
 
 ## Support
 
