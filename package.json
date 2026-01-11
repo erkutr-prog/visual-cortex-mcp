@@ -1,7 +1,7 @@
 {
   "name": "visual-cortex",
   "version": "1.0.0",
-  "description": "",
+  "description": "MCP server for listing iOS simulators and taking screenshots.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erkutr-prog/visual-cortex-mcp.git"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
     "zod": "^4.3.5"
