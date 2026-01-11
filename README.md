@@ -102,6 +102,72 @@ Ask Cursor:
 
 The AI will use the `list_devices` tool to show you all available simulators with their status.
 
+## Optimizing AI Behavior with .cursorrules
+
+To get the most out of Visual Cortex, add these rules to your project's `.cursorrules` file. This teaches Cursor's AI when and how to use the screenshot tools effectively.
+
+Create or edit `.cursorrules` in your project root:
+
+```markdown
+# Visual Cortex MCP Integration
+
+## Available MCP Tools
+- `get_screenshot` - Takes a screenshot of the iOS Simulator
+- `list_devices` - Lists all available iOS Simulators
+
+## When to Use Screenshots
+
+**ALWAYS take a screenshot when:**
+- User asks about visual appearance, styling, layout, or UI issues
+- User mentions "looks wrong", "alignment", "colors", "spacing", "design"
+- User asks to "check the UI" or "see what it looks like"
+- Before making visual/style changes to understand current state
+- After making visual changes to verify the result
+
+**Example triggers:**
+- "Fix the button alignment"
+- "The colors look off"
+- "Check the home screen layout"
+- "Make the spacing consistent"
+
+## Screenshot Workflow
+
+1. **Before Making Changes:**
+   - Take a screenshot first to see the current state
+   - Analyze the screenshot to understand the issue
+   - Make code changes based on what you see
+
+2. **After Making Changes:**
+   - Wait 2-3 seconds after code changes (React Native may reload)
+   - Take a verification screenshot
+   - Compare with the original to confirm fixes
+
+3. **Handling Full Reloads:**
+   - React Native may do a full reload, resetting to entry point
+   - If screenshot shows entry point but user was on another screen:
+     - Inform the user: "The app reloaded to the entry point. Please navigate back to [screen name] and I'll take another screenshot."
+     - OR wait a moment and take another screenshot if navigation is automatic
+
+## Proactive Behavior
+
+- Don't wait for explicit request - if user mentions visual issues, automatically take screenshot
+- Be proactive: "I'll take a screenshot to see the current state and identify the issue"
+- Use screenshots as evidence for your suggestions
+
+## React Native Notes
+
+- React Native Fast Refresh preserves navigation state (preferred)
+- Full reloads reset to entry point (be aware of this)
+- Wait 2-3 seconds after code changes before screenshot
+- Component-only changes usually preserve state
+```
+
+This configuration will make Cursor's AI:
+- ✅ Automatically take screenshots when you mention visual issues
+- ✅ Handle React Native reloads gracefully
+- ✅ Use screenshots to make informed style fixes
+- ✅ Be proactive about visual debugging
+
 ### Example Interactions
 
 ```
